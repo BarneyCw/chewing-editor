@@ -70,6 +70,11 @@
         <translation>更新</translation>
     </message>
     <message>
+        <location filename="../src/ui/ChewingEditor.ui" line="46"/>
+        <source>Sort</source>
+        <translation>排序</translation>
+    </message>
+    <message>
         <location filename="../src/ui/ChewingEditor.ui" line="104"/>
         <source>About Chewing editor</source>
         <translation>關於新酷音詞庫編輯器</translation>
@@ -164,6 +169,13 @@
         <source>Refresh completed. Total %n user phrase(s).</source>
         <translation>
             <numerusform>更新完成。共有 %n 個詞彙。</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/view/Notification.cpp" line="94"/>
+        <source>Sort completed. Total %n user phrase(s).</source>
+        <translation>
+            <numerusform>排序完成。共有 %n 個詞彙。</numerusform>
         </translation>
     </message>
 </context>
