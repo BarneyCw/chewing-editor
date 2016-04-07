@@ -58,9 +58,11 @@ signals:
     void addNewPhraseCompleted(const Userphrase& userphrase);
     void removePhraseCompleted(size_t count);
     void refreshCompleted(size_t count);
+    void sortCompleted(size_t count);
 
 public slots:
     void refresh();
+    void sort();
     void add(std::shared_ptr<QString> phrase, std::shared_ptr<QString> bopomofo);
     void importUserphrase(std::shared_ptr<UserphraseImporter> importer);
     void exportUserphrase(std::shared_ptr<UserphraseExporter> exporter);

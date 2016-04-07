@@ -20,6 +20,11 @@
 #include "UserphraseModel.h"
 
 #include <QDebug>
+#include <typeinfo>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
 
 static void logger(void *data, int level, const char *fmt, ...)
 {
@@ -128,6 +133,7 @@ void UserphraseModel::refresh()
     unsigned int bopomofo_len;
 
     chewing_userphrase_enumerate(ctx_.get());
+
     while (chewing_userphrase_has_next(ctx_.get(), &phrase_len, &bopomofo_len)) {
         phrase.resize(phrase_len);
         bopomofo.resize(bopomofo_len);
@@ -154,6 +160,64 @@ void UserphraseModel::refresh()
 
     qDebug() << "Total userphrase" << userphrase_.size();
     emit refreshCompleted(userphrase_.size());
+}
+
+struct phrase_bopomofo{
+    string phrase;
+    string bopomofo;
+};
+
+bool cmp_pb(const phrase_bopomofo a,const phrase_bopomofo b){
+   return a.bopomofo < b.bopomofo;
+} 
+
+void UserphraseModel::sort()
+{
+    UserphraseSet userphrase;
+
+    std::vector<char> phrase;
+    unsigned int phrase_len;
+
+    std::vector<char> bopomofo;
+    unsigned int bopomofo_len;	
+    
+    std::vector<phrase_bopomofo> pb_list;
+
+    chewing_userphrase_enumerate(ctx_.get());
+
+    while (chewing_userphrase_has_next(ctx_.get(), &phrase_len, &bopomofo_len)) {
+
+        phrase.resize(phrase_len);
+        bopomofo.resize(bopomofo_len);
+
+        int ret = chewing_userphrase_get(ctx_.get(),
+            &phrase[0], phrase.size(),
+            &bopomofo[0], bopomofo.size());
+        if (ret == -1) {
+            qWarning() << "chewing_userphrase_get() returns" << ret;
+            continue;
+        }
+        phrase_bopomofo pb = {&phrase[0], &bopomofo[0]};
+        pb_list.push_back(pb);
+    }
+
+    std::sort(pb_list.begin(),pb_list.end(),cmp_pb); 
+
+    for (std::vector<phrase_bopomofo>::iterator it = pb_list.begin() ; it != pb_list.end(); ++it){
+        userphrase.insert(Userphrase{
+            QString::fromUtf8((it->phrase).c_str()),
+            QString::fromUtf8((it->bopomofo).c_str())
+        });
+    }
+ 
+    emit beginResetModel();
+    userphrase_.swap(userphrase);
+    emit endResetModel();
+
+    cout << typeid(userphrase).name();
+
+    qDebug() << "Total userphrase" << userphrase_.size();
+    emit sortCompleted(userphrase_.size());
 }
 
 void UserphraseModel::add(std::shared_ptr<QString> phrase, std::shared_ptr<QString> bopomofo)
