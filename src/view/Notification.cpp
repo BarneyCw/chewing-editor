@@ -83,3 +83,11 @@ void Notification::notifyRefreshCompleted(size_t count)
 
     setText(tr("Refresh completed. Total %n user phrase(s).", 0, count));
 }
+
+void Notification::notifySortCompleted(size_t count)
+{
+    qDebug() << count;
+
+    setText(tr("Sort completed. Total %n user phrase(s).", 0, count));
+}
+

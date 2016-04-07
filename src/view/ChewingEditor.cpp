@@ -44,6 +44,7 @@ ChewingEditor::ChewingEditor(QWidget *parent)
     setupAdd();
     setupRemove();
     setupRefresh();
+    setupSort();
     setupFilter();
     setupAboutWidget();
 
@@ -203,6 +204,21 @@ void ChewingEditor::setupRefresh()
     );
 
     emit model_->refresh();
+}
+
+void ChewingEditor::setupSort()
+{
+    connect(
+        ui_.get()->sortButton, SIGNAL(pressed()),
+        model_, SLOT(sort())
+    );
+
+    connect(
+        model_, SIGNAL(sortCompleted(size_t)),
+        ui_.get()->notification, SLOT(notifySortCompleted(size_t))
+    );
+
+    // emit model_->sort();  // No sort in initial
 }
 
 void ChewingEditor::setupFilter()
